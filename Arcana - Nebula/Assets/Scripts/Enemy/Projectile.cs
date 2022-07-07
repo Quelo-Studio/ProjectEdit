@@ -9,10 +9,13 @@ public class Projectile : MonoBehaviour
     private void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody2D>();
+        Destroy(gameObject, 5.0f);
     }
 
-    private void FixedUpdate()
+    private void FixedUpdate() => m_Rigidbody.velocity = transform.right * m_Speed * Time.fixedDeltaTime;
+
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        m_Rigidbody.velocity = transform.right * m_Speed * Time.fixedDeltaTime;
+        Destroy(gameObject);
     }
 }
