@@ -292,6 +292,7 @@ GameObject:
   - component: {fileID: 1242311857215335740}
   - component: {fileID: 1242311857215335743}
   - component: {fileID: 1242311857215335712}
+  - component: {fileID: 529214130}
   m_Layer: 7
   m_Name: FlyingRobot
   m_TagString: Untagged
@@ -403,7 +404,7 @@ MonoBehaviour:
   m_Center: {fileID: 0}
   m_Speed: 6000
   m_NextWaypointDistance: 3
-  m_NextUpdateTime: 3
+  m_NextUpdateTime: 3.5
   m_MinLength: 3
   m_MaxLength: 8
 --- !u!114 &1242311857215335712
@@ -423,6 +424,20 @@ MonoBehaviour:
   m_Attacks: 2
   m_AttackRate: 0.5
   m_Offset: 90
+--- !u!114 &529214130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1242311857215335742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d18fc61adc544ab4db26685c22f9fcf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MaxHealth: 100
+  m_Player: {fileID: 0}
 --- !u!1 &1242311857332699818
 GameObject:
   m_ObjectHideFlags: 0

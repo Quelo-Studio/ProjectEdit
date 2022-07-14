@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace ArcaneNebula
@@ -9,24 +10,36 @@ namespace ArcaneNebula
 
         private int m_CurHealth;
 
-        private Animator m_Animator;
+        private Rigidbody2D m_RigidBody;
+        private SpriteRenderer m_SpriteRenderer;
 
         private void Start()
         {
             m_CurHealth = m_MaxHealth;
-            m_Animator = GetComponentInChildren<Animator>();
+
+            m_RigidBody = GetComponentInChildren<Rigidbody2D>();
+            m_SpriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
 
-        public void TakeDamage(int damage)
-        {
-            m_Animator.SetTrigger("Take Hit");
+        public void TakeDamage(int damage, Vector2 direction) => StartCoroutine(TakeDamageImpl(damage, direction));
 
+        private IEnumerator TakeDamageImpl(int damage, Vector2 direction)
+        {
             m_CurHealth -= damage;
             if (m_CurHealth <= 0)
             {
-                m_Animator.SetBool("IsDead", true);
-                GetComponent<BoxCollider2D>().enabled = false;
-                enabled = false;
+                Destroy(gameObject);
+            }
+
+            m_RigidBody.AddForce(direction * 20.0f, ForceMode2D.Impulse);
+
+            for (short i = 0; i < 3; i++)
+            {
+                m_SpriteRenderer.color = Color.red;
+
+                yield return new WaitForSeconds(0.1f);
+
+                m_SpriteRenderer.color = Color.white;
             }
         }
 

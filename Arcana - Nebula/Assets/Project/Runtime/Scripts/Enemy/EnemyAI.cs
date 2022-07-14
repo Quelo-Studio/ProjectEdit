@@ -1,6 +1,5 @@
 using Pathfinding;
 using UnityEngine;
-using UnityEditor;
 
 namespace ArcaneNebula
 {
@@ -25,7 +24,6 @@ namespace ArcaneNebula
         private Seeker m_Seeker;
         private Rigidbody2D m_Rigidbody;
 
-        // Start is called before the first frame update
         private void Start()
         {
             if (m_Targets.Length == 0)
@@ -34,7 +32,7 @@ namespace ArcaneNebula
             m_Seeker = GetComponent<Seeker>();
             m_Rigidbody = GetComponent<Rigidbody2D>();
 
-            InvokeRepeating("UpdatePath", 0.0f, Random.Range(m_NextUpdateTime - 0.5f, m_NextUpdateTime + 0.5f));
+            InvokeRepeating("UpdatePath", 0.0f, m_NextUpdateTime);
         }
 
         private void UpdatePath()
@@ -96,6 +94,11 @@ namespace ArcaneNebula
             m_LastIndex = randomIndex;
 
             return m_Targets[randomIndex].position;
+        }
+
+        public void Hello()
+        {
+            Debug.Log("YES");
         }
 
         private Vector2 GetRandomPoint()

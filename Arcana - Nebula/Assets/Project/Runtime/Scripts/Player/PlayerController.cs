@@ -10,6 +10,7 @@ namespace ArcaneNebula
         private PlayerCombat m_Combat;
 
         private float m_Move = 0.0f;
+        private float m_MoveY = 0.0f;
 
         private void Start()
         {
@@ -21,16 +22,20 @@ namespace ArcaneNebula
             InputSystem.Player.Jump.canceled += m_Motor.OnJumpStop;
 
             InputSystem.Player.Dash.performed += m_Motor.OnDash;
+
+            InputSystem.Player.Attack.performed += m_Combat.SetAttack;
         }
 
         private void Update()
         {
             m_Move = InputSystem.Player.Move.ReadValue<float>();
+            m_MoveY = InputSystem.Player.MoveY.ReadValue<float>();
         }
 
         private void FixedUpdate()
         {
             m_Motor.Move(m_Move);
+            m_Combat.MoveY = m_MoveY;
         }
     }
 }

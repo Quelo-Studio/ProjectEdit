@@ -7,6 +7,8 @@ namespace ArcaneNebula
     [RequireComponent(typeof(Rigidbody2D))]
     public class PlayerMotor : MonoBehaviour
     {
+        public bool FacingRight { get { return m_FacingRight; } }
+
         [Header("Movement")]
         [SerializeField] private float m_MoveSpeed = 10f;
         [SerializeField] private float m_Acceleration = 7f;
@@ -106,7 +108,7 @@ namespace ArcaneNebula
             float acelRate = Mathf.Abs(targetSpeed) > 0.01f ? m_Acceleration : m_Decceleration;
             float movement = Mathf.Pow(Mathf.Abs(speedDiff) * acelRate, m_VelocityPower) * Mathf.Sign(speedDiff);
 
-            if (!m_IsDashing)
+            if (!m_IsDashing && !m_PlayerCombat.IsAttacking)
                 m_Rigidbody.AddForce(movement * Vector2.right);
 
             // Firction
@@ -246,6 +248,13 @@ namespace ArcaneNebula
         }
 
         #endregion
+
+        public void OnAttack(float moveY, float attackForce)
+        {
+            if (Mathf.Abs(moveY) < 0.5f)
+                m_Rigidbody.AddForce(-transform.right * attackForce, ForceMode2D.Impulse);
+            else m_Rigidbody.AddForce(attackForce * Mathf.Sign(moveY) * -transform.up, ForceMode2D.Impulse);
+        }
 
         public void Animate(float move)
         {
