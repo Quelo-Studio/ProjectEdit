@@ -1,0 +1,16 @@
+{
+    "name": "ArcaneNebulaPackages",
+    "rootNamespace": "",
+    "references": [
+        "GUID:5661c44a7b046cd4cb4f6777a441f81d"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
