@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine.EventSystems;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     enum EditorState
     {
@@ -54,15 +54,15 @@ namespace ArcaneNebula
             InputSystem.Editor.Enable();
 
             // Left Mouse Button
-            InputSystem.Editor.LMB.performed += (InputAction.CallbackContext c) => {  m_IsLPressing = true; };
-            InputSystem.Editor.LMB.canceled += (InputAction.CallbackContext c) => { m_IsLPressing = false; };
+            InputSystem.Editor.LMB.performed += _ => m_IsLPressing = true;
+            InputSystem.Editor.LMB.canceled += _ => m_IsLPressing = false;
 
             // Alt Key
-            InputSystem.Editor.Alt.performed += (InputAction.CallbackContext c) => { m_IsAlt= true; };
-            InputSystem.Editor.Alt.canceled += (InputAction.CallbackContext c) => { m_IsAlt = false; };
+            InputSystem.Editor.Alt.performed += _ => m_IsAlt = true;
+            InputSystem.Editor.Alt.canceled += _ => m_IsAlt = false;
 
             // E Key for Editting
-            InputSystem.Editor.Edit.performed += (InputAction.CallbackContext c) =>
+            InputSystem.Editor.Edit.performed += _ =>
             {
                 if (m_EditorState == EditorState.Edit)
                     return;
@@ -72,11 +72,11 @@ namespace ArcaneNebula
                 m_EditorState = EditorState.Edit;
                 m_ToolText.text = "Edit";
 
-                m_TileCreator.SetSelectedTile(0);
+                m_TileCreator.ClearSelection();
             };
 
             // B Key for Brush
-            InputSystem.Editor.Brush.performed += (InputAction.CallbackContext c) =>
+            InputSystem.Editor.Brush.performed += _ =>
             {
                 if (m_EditorState == EditorState.Brush)
                     return;
@@ -86,11 +86,11 @@ namespace ArcaneNebula
                 m_EditorState = EditorState.Brush;
                 m_ToolText.text = "Brush";
 
-                m_TileCreator.SetSelectedTile(0);
+                m_TileCreator.ClearSelection();
             };
 
             // D Key for Deleting
-            InputSystem.Editor.Delete.performed += (InputAction.CallbackContext c) =>
+            InputSystem.Editor.Delete.performed += _ =>
             {
                 if (m_EditorState == EditorState.Delete)
                     return;
@@ -100,17 +100,13 @@ namespace ArcaneNebula
                 m_EditorState = EditorState.Delete;
                 m_ToolText.text = "Delete";
 
-                m_TileCreator.SetSelectedTile(0);
+                m_TileCreator.ClearSelection();
             };
-
-            // Esc Key for Quitting the game
-            InputSystem.Editor.Esc.performed += (InputAction.CallbackContext c) => { Application.Quit(); };
         }
 
         private void Start()
         {
-            if (!m_ToolText)
-                Debug.LogError("Tool text hasn't been assigned", gameObject);
+            Debug.Assert(m_ToolText, "Tool text hasn't been assigned", gameObject);
 
             m_MainCamera = Camera.main;
 

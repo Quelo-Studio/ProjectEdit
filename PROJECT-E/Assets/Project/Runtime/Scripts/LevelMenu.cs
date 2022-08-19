@@ -1,8 +1,8 @@
+using UnityEngine.SceneManagement;
 using UnityEngine;
 using TMPro;
-using UnityEngine.SceneManagement;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public class LevelMenu : MonoBehaviour
     {
@@ -11,31 +11,28 @@ namespace ArcaneNebula
         [SerializeField] private TextMeshProUGUI m_LevelName;
 
         private GameManager m_GameManager;
-        private EditorMenu m_EditorMenu;
 
         private LevelMenu() => Instance = this;
 
         private void Awake()
         {
             m_GameManager = GameManager.Instance;
-
-            m_EditorMenu = EditorMenu.Instance;
         }
 
-        private void OnEnable() => m_LevelName.text = m_GameManager.CurrentLevel.Name;
+        private async void OnEnable()
+        {
+            Level level = m_GameManager.CurrentLevel;
+            m_LevelName.text = level.Name;
+            level = await m_GameManager.OnlineSerializer.GetOnlineLevel(level.ID);
+            m_GameManager.SetCurrentLevel(level);
+        }
 
         public void PlayLevel() => SceneManager.LoadScene("Level");
 
-        public void EditLevel() => SceneManager.LoadScene("Editor");
-
         public void DeleteLevel()
         {
-            Serialization.DeleteLevel(m_GameManager.CurrentLevel);
-            GameManager.Instance.SetCurrentLevel(null);
-
-            m_EditorMenu.gameObject.SetActive(true);
-            m_EditorMenu.ReloadData();
-            gameObject.SetActive(false);
+            m_GameManager.OnlineSerializer.DeleteLevel(m_GameManager.CurrentLevel);
+            GameManager.Instance.SetCurrentLevel(Level.Empty);
         }
     }
 }

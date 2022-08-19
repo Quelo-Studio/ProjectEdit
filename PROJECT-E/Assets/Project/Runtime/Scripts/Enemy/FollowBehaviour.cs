@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public class FollowBehaviour : StateMachineBehaviour
     {

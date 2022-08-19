@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public abstract class Singelton<T> : MonoBehaviour where T : Singelton<T>
     {
@@ -10,13 +10,13 @@ namespace ArcaneNebula
             {
                 if (s_Instance == null)
                 {
-                    GameObject gm = GameObject.FindGameObjectWithTag("GameManager");
+                    GameObject gm = GameObject.FindGameObjectWithTag("GameController");
                     if (gm)
                         s_Instance = gm.AddComponent<T>();
                     else
                     {
                         gm = new GameObject("GameManager");
-                        gm.tag = "GameManager";
+                        gm.tag = "GameController";
                         s_Instance = gm.AddComponent<T>();
                     }
                 }

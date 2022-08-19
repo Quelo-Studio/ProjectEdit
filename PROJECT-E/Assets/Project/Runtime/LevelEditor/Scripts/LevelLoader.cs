@@ -6,7 +6,7 @@ using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public class LevelLoader : MonoBehaviour
     {
@@ -23,7 +23,7 @@ namespace ArcaneNebula
             else Destroy(this);
 
             m_GameManager = GameManager.Instance;
-            TileData[] tilesData = m_GameManager.CurrentLevel.TilesData;
+            TileInstance[] tilesData = m_GameManager.CurrentLevel.TilesData;
             if (tilesData != null)
                 LoadTilemap(tilesData);
         }
@@ -35,12 +35,12 @@ namespace ArcaneNebula
             TileCreator tileCreator = GetComponent<TileCreator>();
 
             var data = tileCreator.TilesData.Values;
-            TileData[] tilesData = new TileData[data.Count];
+            TileInstance[] tilesData = new TileInstance[data.Count];
             data.CopyTo(tilesData, 0);
 
             level.TilesData = tilesData;
 
-            Serialization.SerializeLevel(level);
+            m_GameManager.Serializer.SerializeLevel(level);
         }
 
         public void SaveCompressed()
@@ -51,12 +51,12 @@ namespace ArcaneNebula
             TileCreator tileCreator = GetComponent<TileCreator>();
 
             var data = tileCreator.TilesData.Values;
-            TileData[] tilesData = new TileData[data.Count];
+            TileInstance[] tilesData = new TileInstance[data.Count];
             tileCreator.TilesData.Values.CopyTo(tilesData, 0);
 
             string compressedFile = string.Empty;
 
-            foreach (TileData tileData in tilesData)
+            foreach (TileInstance tileData in tilesData)
             {
                 compressedFile += $"0:{tileData.CellPosition.x},{tileData.CellPosition.y}+";
                 compressedFile += $"1:{tileData.Index:X};";
@@ -72,7 +72,7 @@ namespace ArcaneNebula
                 .Build();
 
             string level = File.ReadAllText($"{Path}/TestLevel.lvl");
-            TileData[] tilesData = deserializer.Deserialize<TileData[]>(level);
+            TileInstance[] tilesData = deserializer.Deserialize<TileInstance[]>(level);
 
             LoadTilemap(tilesData);
         }
@@ -81,12 +81,12 @@ namespace ArcaneNebula
         {
             string compressedLevel = File.ReadAllText($"{Path}/TestLevelCompressed.lvl");
 
-            List<TileData> compressedTilesData = new();
+            List<TileInstance> compressedTilesData = new();
             string[] tiles = compressedLevel.Split(';');
 
             foreach (string tile in tiles)
             {
-                TileData tileData = new();
+                TileInstance tileData = new();
 
                 string[] properties = tile.Split('+');
                 foreach (string property in properties)
@@ -113,15 +113,14 @@ namespace ArcaneNebula
             LoadTilemap(compressedTilesData.ToArray());
         }
 
-        public void LoadTilemap(TileData[] tilesData)
+        public void LoadTilemap(TileInstance[] tilesData)
         {
             TileCreator tileCreator = GetComponent<TileCreator>();
 
-            foreach (TileData tileData in tilesData)
+            foreach (TileInstance tileData in tilesData)
             {
-                Vector3 cp = tileData.CellPosition;
-                Vector3Int pos = new((int)cp.x, (int)cp.y, (int)cp.z);
-                tileCreator.SetTile(pos, tileData.Index);
+                Vector2Int cp = tileData.CellPosition;
+                tileCreator.SetTile((Vector3Int)cp, tileData.Index);
             }
         }
     }
@@ -153,6 +152,19 @@ namespace ArcaneNebula
             return true;
         }
 
+        private bool TryConsumeValue(IParser parser, out int value)
+        {
+            if (!parser.TryConsume(out Scalar x))
+            {
+                Debug.LogError("Invalid YAML content!");
+                value = 0;
+                return false;
+            }
+
+            value = Convert.ToInt32(x.Value);
+            return true;
+        }
+
         public object ReadYaml(IParser parser, Type type)
         {
             if (!parser.TryConsume(out SequenceStart _))
@@ -161,7 +173,7 @@ namespace ArcaneNebula
                 return null;
             }
 
-            if (type == typeof(Vector2) || type == typeof(Vector2Int))
+            if (type == typeof(Vector2))
             {
                 Vector2 result;
 
@@ -177,7 +189,23 @@ namespace ArcaneNebula
                     return null;
                 }
 
-                return type == typeof(Vector2) ? result : new Vector2Int((int)result.x, (int)result.y);
+                return result;
+            }
+            else if (type == typeof(Vector2Int))
+            {
+                if (!TryConsumeValue(parser, out int x))
+                    return null;
+
+                if (!TryConsumeValue(parser, out int y))
+                    return null;
+
+                if (!parser.TryConsume(out SequenceEnd _))
+                {
+                    Debug.LogError("Invalid YAML content!");
+                    return null;
+                }
+
+                return new Vector2Int(x, y);
             }
             else if (type == typeof(Vector3) || type == typeof(Vector3Int))
             {

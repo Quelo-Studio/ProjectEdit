@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public class MenuManager : MonoBehaviour
     {

@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public class Enemy : MonoBehaviour
     {

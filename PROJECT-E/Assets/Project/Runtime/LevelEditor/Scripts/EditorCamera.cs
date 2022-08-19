@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public class EditorCamera : MonoBehaviour
     {
@@ -22,12 +22,14 @@ namespace ArcaneNebula
         {
             m_Camera = GetComponent<Camera>();
 
+			InputSystem.Editor.Enable();
+
 			// Alt Key
-			InputSystem.Editor.Alt.performed += (InputAction.CallbackContext c) => { m_IsAlt = true; };
-			InputSystem.Editor.Alt.canceled += (InputAction.CallbackContext c) => { m_IsAlt = false; };
+			InputSystem.Editor.Alt.performed += _ => m_IsAlt = true; 
+			InputSystem.Editor.Alt.canceled += _ => m_IsAlt = false;
 
 			// Left Mouse Button
-			InputSystem.Editor.LMB.performed += (InputAction.CallbackContext c) =>
+			InputSystem.Editor.LMB.performed += _ =>
 			{
 				m_IsLPressing = true;
 
@@ -36,14 +38,15 @@ namespace ArcaneNebula
 				if (m_Plane.Raycast(ray, out float entry))
 					m_DragStartPosition = ray.GetPoint(entry);
 			};
-			InputSystem.Editor.LMB.canceled += (InputAction.CallbackContext c) => { m_IsLPressing = false; };
+
+			InputSystem.Editor.LMB.canceled += _ => m_IsLPressing = false;
 
 			// Right Mouse Button
-			InputSystem.Editor.RMB.performed += (InputAction.CallbackContext c) => { m_IsRPressing = true; };
-			InputSystem.Editor.RMB.canceled += (InputAction.CallbackContext c) => { m_IsRPressing = false; };
+			InputSystem.Editor.RMB.performed += _ => m_IsRPressing = true; 
+			InputSystem.Editor.RMB.canceled += _ => m_IsRPressing = false; 
 
 			// Mouse Scroll
-			InputSystem.Editor.ScrollDelta.performed += (InputAction.CallbackContext c) => { MouseScroll(c.ReadValue<float>()); };
+			InputSystem.Editor.ScrollDelta.performed += c => MouseScroll(c.ReadValue<float>());
 		}
 
 		private void Update()

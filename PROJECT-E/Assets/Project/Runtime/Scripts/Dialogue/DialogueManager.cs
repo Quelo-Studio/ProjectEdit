@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public class DialogueManager : MonoBehaviour
     {

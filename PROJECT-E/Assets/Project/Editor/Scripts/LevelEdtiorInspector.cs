@@ -1,11 +1,11 @@
-using ArcaneNebula;
+using ProjectE;
 using UnityEditor;
 using UnityEngine;
 
 namespace ArcaneNebulaEdtior
 {
     [CustomEditor(typeof(LevelLoader))]
-    public class LevelEdtiorInspector : Editor
+    public class LevelEdtiorInspector : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {

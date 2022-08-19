@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     [RequireComponent(typeof(Rigidbody2D))]
     public class PlayerMotor : MonoBehaviour

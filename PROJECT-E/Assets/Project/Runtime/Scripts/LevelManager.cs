@@ -1,14 +1,14 @@
 using UnityEngine;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public class LevelManager : MonoBehaviour
     {
-        [SerializeField] private GameObject m_PLayerContainer;
+        [SerializeField] private GameObject m_PlayerContainer;
 
         private void Start()
         {
-            Instantiate(m_PLayerContainer, new(0.5f, 0.5f, 1.0f), Quaternion.identity);
+            Instantiate(m_PlayerContainer, new(0.5f, 0.5f, 0.0f), Quaternion.identity);
         }
     }
 }

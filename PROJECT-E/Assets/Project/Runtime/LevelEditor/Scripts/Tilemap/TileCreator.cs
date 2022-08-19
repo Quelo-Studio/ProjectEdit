@@ -2,17 +2,24 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
-    public struct TileData
+    public struct TileInstance
     {
-        public Vector2 CellPosition;
+        public Vector2Int CellPosition;
         public int Index;
 
-        public TileData(Vector3 cellPosition, int index)
+        public TileInstance(Vector2Int cellPosition, int index)
         {
             CellPosition = cellPosition;
             Index = index;
+        }
+
+        public static implicit operator bool(TileInstance tile) => tile.Index != -1;
+        public static implicit operator int(TileInstance tile) => tile.Index;
+        public static implicit operator Vector3Int(TileInstance tile)
+        {
+            return (Vector3Int)tile.CellPosition;
         }
     }
 
@@ -22,17 +29,17 @@ namespace ArcaneNebula
         public static TileCreator Instance { get => s_Instance; }
         private static TileCreator s_Instance;
 
-        public Dictionary<Vector3Int, TileData> TilesData { get { return m_TilesData; } }
+        public Dictionary<Vector3Int, TileInstance> TilesData { get { return m_TilesInstances; } }
 
-        public CreatorTile[] Tiles { get => m_Tiles; }
+        public List<Tile> Tiles { get => m_Tiles; }
 
-        [SerializeField] private CreatorTile[] m_Tiles;
+        [SerializeField] private List<Tile> m_Tiles;
 
-        private readonly Dictionary<Vector3Int, TileData> m_TilesData = new();
+        private readonly Dictionary<Vector3Int, TileInstance> m_TilesInstances = new();
 
         private Tilemap m_Tilemap;
         private UIManager m_UIManager;
-        private CreatorTile m_SelectedTile;
+        private TileInstance m_SelectedTile;
 
         private void Awake()
         {
@@ -40,9 +47,10 @@ namespace ArcaneNebula
                 s_Instance = this;
             else Destroy(this);
 
-            m_TilesData.Clear();
+            m_TilesInstances.Clear();
+            m_SelectedTile.Index = -1;
 
-            foreach (CreatorTile tile in m_Tiles)
+            foreach (Tile tile in m_Tiles)
             {
                 if (tile)
                     tile.color = Color.white;
@@ -55,44 +63,33 @@ namespace ArcaneNebula
             m_UIManager = UIManager.Instance;
         }
 
-        public CreatorTile SelectTile(Vector3Int position)
+        public TileInstance SelectTile(Vector3Int position)
         {
-            if (m_SelectedTile)
-            {
-                m_SelectedTile.color = Color.white;
-                m_Tilemap.RefreshTile(m_SelectedTile.CellPosition);
-            }
+            ClearSelection();
 
-            m_SelectedTile = m_Tilemap.GetTile<CreatorTile>(position);
+            Tile tile = m_Tilemap.GetTile<Tile>(position);
+            m_SelectedTile.Index = m_Tiles.FindIndex(a => a == tile);
 
             if (m_SelectedTile)
             {
-                m_SelectedTile.CellPosition = position;
-                m_SelectedTile.color = Color.yellow;
+                m_SelectedTile.CellPosition = (Vector2Int)position;
+                m_Tiles[m_SelectedTile].color = Color.yellow;
                 m_Tilemap.RefreshTile(position);
-                m_UIManager.SetSelectedTileProps(m_TilesData[position]);
+                m_UIManager.SetSelectedTileProps(m_TilesInstances[position]);
             }
             else m_UIManager.ClearSelectedTileProps();
 
             return m_SelectedTile;
         }
 
-        public void SetSelectedTile(uint index) => SetSelectedTile(m_Tiles[index]);
-
-        public void SetSelectedTile(CreatorTile tile)
+        public void ClearSelection()
         {
             if (m_SelectedTile)
             {
-                m_SelectedTile.color = Color.white;
-                m_Tilemap.RefreshTile(m_SelectedTile.CellPosition);
-            }
-
-            m_SelectedTile = tile;
-
-            if (m_SelectedTile)
-            {
-                m_SelectedTile.color = Color.green;
-                m_Tilemap.RefreshTile(m_SelectedTile.CellPosition);
+                m_Tiles[m_SelectedTile].color = Color.white;
+                m_Tilemap.RefreshTile(m_SelectedTile);
+                m_SelectedTile.Index = -1;
+                m_SelectedTile.CellPosition = Vector2Int.zero;
             }
         }
 
@@ -101,15 +98,15 @@ namespace ArcaneNebula
             if (index == 0)
                 DeleteTile(position);
 
-            CreatorTile tile = m_Tiles[index];
+            Tile tile = m_Tiles[index];
 
             if (!m_Tilemap)
                 m_Tilemap = GetComponentInChildren<Tilemap>();
 
             m_Tilemap.SetTile(position, tile);
-            TileData tileData = new(position, index);
-            if (!m_TilesData.TryAdd(position, tileData))
-                m_TilesData[position] = tileData;
+            TileInstance tileInstance = new((Vector2Int)position, index);
+            if (!m_TilesInstances.TryAdd(position, tileInstance))
+                m_TilesInstances[position] = tileInstance;
         }
 
         public void DeleteTile(Vector3Int position)
@@ -118,13 +115,13 @@ namespace ArcaneNebula
                 m_Tilemap = GetComponentInChildren<Tilemap>();
 
             m_Tilemap.SetTile(position, null);
-            if (m_TilesData.ContainsKey(position))
-                m_TilesData.Remove(position);
+            if (m_TilesInstances.ContainsKey(position))
+                m_TilesInstances.Remove(position);
         }
 
         public void TileColor(Vector3Int position, Color color)
         {
-            CreatorTile tile = m_Tilemap.GetTile<CreatorTile>(position);
+            Tile tile = m_Tilemap.GetTile<Tile>(position);
             tile.color = color;
             m_Tilemap.RefreshTile(position);
         }

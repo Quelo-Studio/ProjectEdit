@@ -1,32 +1,47 @@
 using UnityEngine;
 using GamesTan.UI;
 using System.Collections.Generic;
+using System;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public class OnlineMenu : MonoBehaviour, ISuperScrollRectDataProvider
     {
-        [SerializeField] private SuperScrollRect m_OnlineLevelsMenu;
+        public static OnlineMenu Instance { get; private set; }
+
+        [SerializeField] private SuperScrollRect m_OnlineLevelsRect;
         [SerializeField] private GameObject m_Loading;
+        [SerializeField] private GameObject m_LevelMenu;
 
-        private List<LevelData> m_Levels = new();
+        private List<Level> m_Levels = new();
 
-        private void Awake() => m_OnlineLevelsMenu.DoAwake(this);
-
-        public async void OnEnable()
+        private void Awake()
         {
-            m_OnlineLevelsMenu.ReloadData();
+            if (!Instance)
+                Instance = this;
+            else Destroy(this);
+
+            m_OnlineLevelsRect.DoAwake(this);
+            GameManager.Instance.OnlineSerializer.OnUpdateLevel += ReloadData;
+        }
+
+        public async void ReloadData()
+        {
+            if (!gameObject.activeSelf)
+                return;
+
+            m_OnlineLevelsRect.ReloadData();
             m_Loading.SetActive(true);
             try
             {
                 m_Levels = await Database.GetLevels();
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 Debug.LogError($"Exeption: {e}", gameObject);
             }
             m_Loading.SetActive(false);
-            m_OnlineLevelsMenu.ReloadData();
+            m_OnlineLevelsRect.ReloadData();
         }
 
         public void OnDisable() => m_Levels.Clear();
@@ -35,9 +50,9 @@ namespace ArcaneNebula
 
         public void SetCell(GameObject cell, int index)
         {
-            LevelCell levelCell = cell.GetComponent<LevelCell>();
+            OnlineLevelCell levelCell = cell.GetComponent<OnlineLevelCell>();
             if (levelCell)
-                levelCell.BindData(m_Levels[index]);
+                levelCell.BindData(m_Levels[index], gameObject, m_LevelMenu);
         }
     }
 }

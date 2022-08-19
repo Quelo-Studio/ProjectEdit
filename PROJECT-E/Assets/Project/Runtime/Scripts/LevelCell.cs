@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public class LevelCell : MonoBehaviour
     {
@@ -17,7 +17,7 @@ namespace ArcaneNebula
 
         private void Start()
         {
-            m_LevelMenu = LevelMenu.Instance.gameObject;
+            m_LevelMenu = EditorLevelMenu.Instance.gameObject;
             m_EditorMenu = EditorMenu.Instance.gameObject;
         }
 

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public class SelectCell : MonoBehaviour
     {

@@ -2,7 +2,7 @@ using GamesTan.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public struct CellData
     {

@@ -2,7 +2,7 @@ using UnityEngine;
 using GamesTan.UI;
 using TMPro;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public class EditorMenu : MonoBehaviour, ISuperScrollRectDataProvider
     {
@@ -10,6 +10,8 @@ namespace ArcaneNebula
 
         [SerializeField] private SuperScrollRect m_EditorLevels;
         [SerializeField] private TMP_InputField m_InputField;
+
+        private ref Serializer Serializer => ref GameManager.Instance.Serializer;
 
         private EditorMenu() => Instance = this;
 
@@ -20,18 +22,18 @@ namespace ArcaneNebula
             if (m_InputField.text == string.Empty)
                 return;
 
-            Serialization.SerializeLevel(new Level { Name = m_InputField.text });
+            Serializer.SerializeLevel(new Level { ID = -1, Name = m_InputField.text });
             m_EditorLevels.ReloadData();
         }
 
         public void ReloadData() => m_EditorLevels.ReloadData();
 
-        public int GetCellCount() => Serialization.Levels.Count;
+        public int GetCellCount() => Serializer.Levels.Count;
 
         public void SetCell(GameObject cell, int index)
         {
             LevelCell levelCell = cell.GetComponent<LevelCell>();
-            levelCell.BindData(Serialization.Levels[index]);
+            levelCell.BindData(Serializer.Levels[index]);
         }
     }
 }

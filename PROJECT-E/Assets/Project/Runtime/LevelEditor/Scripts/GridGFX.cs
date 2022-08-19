@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public class GridGFX : MonoBehaviour
     {

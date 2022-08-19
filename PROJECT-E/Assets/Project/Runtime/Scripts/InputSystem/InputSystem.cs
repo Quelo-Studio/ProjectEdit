@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public static class InputSystem
     {
@@ -21,6 +21,8 @@ namespace ArcaneNebula
             s_Player = s_Instance.Player;
             s_Editor = s_Instance.Editor;
             s_UI = s_Instance.UI;
+
+            UI.Enable();
         }
 
         public static void Shutdown()

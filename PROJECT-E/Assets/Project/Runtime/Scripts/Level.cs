@@ -1,4 +1,4 @@
-namespace ArcaneNebula
+namespace ProjectE
 {
     public struct LevelData
     {
@@ -12,10 +12,19 @@ namespace ArcaneNebula
         }
     }
 
-    public class Level
+    public struct Level
     {
-        public int ID = -1;
+        public int ID;
         public string Name;
-        public TileData[] TilesData;
+        public TileInstance[] TilesData;
+
+        public static readonly Level Empty = new(-1, string.Empty, null);
+
+        public Level(int id, string name, TileInstance[] tilesInstances)
+        {
+            ID = id;
+            Name = name;
+            TilesData = tilesInstances;
+        }
     }
 }

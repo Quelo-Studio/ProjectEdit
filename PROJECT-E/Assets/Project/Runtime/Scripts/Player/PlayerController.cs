@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     [RequireComponent(typeof(PlayerMotor))]
     [RequireComponent(typeof(PlayerCombat))]
@@ -26,6 +26,17 @@ namespace ArcaneNebula
             InputSystem.Player.Dash.performed += m_Motor.OnDash;
 
             InputSystem.Player.Attack.performed += m_Combat.SetAttack;
+        }
+
+        private void OnDestroy()
+        {
+            InputSystem.Player.Jump.performed -= m_Motor.OnJump;
+            InputSystem.Player.Jump.performed -= m_Motor.OnWallJump;
+            InputSystem.Player.Jump.canceled -= m_Motor.OnJumpStop;
+
+            InputSystem.Player.Dash.performed -= m_Motor.OnDash;
+
+            InputSystem.Player.Attack.performed -= m_Combat.SetAttack;
         }
 
         private void Update()

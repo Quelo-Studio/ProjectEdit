@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using DanielLochner.Assets.SimpleSideMenu;
 using UnityEngine.InputSystem;
 using TMPro;
-using System;
 using UnityEngine.SceneManagement;
-using UnityEngine.EventSystems;
+using UnityEngine.Tilemaps;
 
-namespace ArcaneNebula
+namespace ProjectE
 {
     public class UIManager : MonoBehaviour, ISuperScrollRectDataProvider
     {
@@ -64,8 +63,8 @@ namespace ArcaneNebula
         {
             m_LevelLoader = LevelLoader.Instance;
 
-            CreatorTile[] tiles = TileCreator.Instance.Tiles;
-            for (int i = 1; i < tiles.Length; i++)
+            List<Tile> tiles = TileCreator.Instance.Tiles;
+            for (int i = 0; i < tiles.Count; i++)
                 m_CellsData.Add(new CellData { Index = i, Sprite = tiles[i].sprite });
 
             m_InventoryScroll.DoAwake(this);
@@ -97,7 +96,7 @@ namespace ArcaneNebula
             m_YText.text = "Y: ";
         }
 
-        public void SetSelectedTileProps(TileData tileData)
+        public void SetSelectedTileProps(TileInstance tileData)
         {
             m_XText.text = $"X: {tileData.CellPosition.x}";
             m_YText.text = $"Y: {tileData.CellPosition.y}";
